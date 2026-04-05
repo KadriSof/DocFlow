@@ -31,8 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-
-## Excluded Project files
-docs/tdd-log.md
-qwen-modus-operandi.md
