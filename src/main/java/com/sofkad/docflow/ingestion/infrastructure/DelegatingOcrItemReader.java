@@ -1,6 +1,8 @@
 package com.sofkad.docflow.ingestion.infrastructure;
 
 import com.sofkad.docflow.ocr.domain.OcrRequest;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemReader;
 
 /**
@@ -8,7 +10,7 @@ import org.springframework.batch.item.ItemReader;
  * If that returns null (no document ID or file not found), falls back to a secondary reader.
  * This allows the same step to work for both real uploads and test scenarios.
  */
-public class DelegatingOcrItemReader implements ItemReader<OcrRequest> {
+public class DelegatingOcrItemReader implements ItemReader<OcrRequest>, StepExecutionListener {
 
     private final DocumentOcrItemReader documentReader;
     private final ItemReader<OcrRequest> fallbackReader;
@@ -18,6 +20,16 @@ public class DelegatingOcrItemReader implements ItemReader<OcrRequest> {
                                     ItemReader<OcrRequest> fallbackReader) {
         this.documentReader = documentReader;
         this.fallbackReader = fallbackReader;
+    }
+
+    @Override
+    public void beforeStep(StepExecution stepExecution) {
+        documentReader.beforeStep(stepExecution);
+    }
+
+    @Override
+    public org.springframework.batch.core.ExitStatus afterStep(StepExecution stepExecution) {
+        return documentReader.afterStep(stepExecution);
     }
 
     @Override

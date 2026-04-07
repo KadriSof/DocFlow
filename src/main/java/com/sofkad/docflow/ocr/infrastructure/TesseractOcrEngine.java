@@ -32,6 +32,12 @@ public class TesseractOcrEngine implements OcrEngine {
 
     public TesseractOcrEngine(OcrProperties ocrProperties) {
         this.tesseract = new Tesseract();
+        // Set tessdata path (default Tesseract installation on Windows)
+        String tessdataPath = System.getenv("TESSDATA_PREFIX");
+        if (tessdataPath == null) {
+            tessdataPath = "C:\\Program Files\\Tesseract-OCR\\tessdata";
+        }
+        tesseract.setDatapath(tessdataPath);
         tesseract.setLanguage(ocrProperties.getDefaultLanguage());
     }
 

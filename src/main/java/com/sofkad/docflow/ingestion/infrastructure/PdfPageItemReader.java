@@ -66,4 +66,8 @@ public class PdfPageItemReader implements ItemReader<OcrRequest> {
             currentPageIndex = 0;
         }
     }
+
+    public int getNumberOfPages() {
+        return document != null ? document.getNumberOfPages() : 0;
+    }
 }

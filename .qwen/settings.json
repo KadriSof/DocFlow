@@ -13,7 +13,12 @@
       "Bash(python *)",
       "Bash(taskkill *)",
       "Bash(del *)",
-      "Bash(rm *)"
+      "Bash(rm *)",
+      "Bash(git reset *)",
+      "Bash(echo *)",
+      "Bash(where *)",
+      "Bash(tesseract *)",
+      "Bash(dir *)"
     ]
   },
   "$version": 3

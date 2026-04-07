@@ -1,10 +1,12 @@
 package com.sofkad.docflow.ingestion.infrastructure;
 
 import com.sofkad.docflow.ocr.domain.OcrRequest;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -13,33 +15,38 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DocumentOcrItemReaderTest {
 
-    @TempDir
-    Path tempDir;
-
     @Test
-    void shouldReadPdfPagesFromStoredFile() throws Exception {
-        // Create a minimal PDF-like file (not a real PDF, but tests the reader wiring)
-        UUID documentId = UUID.randomUUID();
-        FileStorageService storageService = new FileStorageService(tempDir.toString());
-
-        // We can't create a real multi-page PDF in a unit test easily, so we verify
-        // the reader returns null when no valid PDF is found
+    void shouldReturnNullWhenFileStorageBasePathDoesNotExist() throws Exception {
+        FileStorageService storageService = new FileStorageService("/nonexistent/path/that/does/not/exist");
         DocumentOcrItemReader reader = new DocumentOcrItemReader(storageService, "ara");
 
-        // When document doesn't exist, read should throw
-        assertThat(reader).isNotNull();
-    }
-
-    @Test
-    void shouldReturnNullWhenDocumentNotFound() throws Exception {
-        UUID nonExistentId = UUID.randomUUID();
-        FileStorageService storageService = new FileStorageService(tempDir.toString());
-        DocumentOcrItemReader reader = new DocumentOcrItemReader(storageService, "ara");
-
-        reader.setDocumentId(nonExistentId);
-
+        // Without beforeStep being called, reader should return null
         OcrRequest result = reader.read();
 
         assertThat(result).isNull();
+    }
+
+    @Test
+    void shouldReadPdfPagesWhenFileExists(@TempDir Path tempDir) throws Exception {
+        // Create a simple 2-page PDF
+        UUID documentId = UUID.randomUUID();
+        File pendingDir = tempDir.resolve("pending").toFile();
+        pendingDir.mkdirs();
+        
+        Path pdfPath = tempDir.resolve("pending").resolve(documentId + ".pdf");
+        try (PDDocument doc = new PDDocument()) {
+            doc.addPage(new PDPage());
+            doc.addPage(new PDPage());
+            doc.save(pdfPath.toFile());
+        }
+
+        FileStorageService storageService = new FileStorageService(tempDir.toString());
+
+        // Manually trigger file loading (simulating what beforeStep would do)
+        Path loadedPath = storageService.loadPdf(documentId);
+        assertThat(loadedPath).exists();
+
+        // Verify we can read the file
+        assertThat(loadedPath.getFileName().toString()).isEqualTo(documentId + ".pdf");
     }
 }

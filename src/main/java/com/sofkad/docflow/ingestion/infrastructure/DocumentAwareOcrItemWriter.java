@@ -50,7 +50,14 @@ public class DocumentAwareOcrItemWriter implements ItemWriter<OcrResult>, StepEx
             return stepExecution.getExitStatus();
         }
 
-        UUID documentId = UUID.fromString(documentIdStr);
+        UUID documentId;
+        try {
+            documentId = UUID.fromString(documentIdStr);
+        } catch (IllegalArgumentException e) {
+            log.debug("documentId '{}' is not a valid UUID — skipping document update", documentIdStr);
+            return stepExecution.getExitStatus();
+        }
+
         Document document = documentRepository.findById(documentId).orElse(null);
         if (document == null) {
             log.warn("Document {} not found for OCR result update", documentId);
