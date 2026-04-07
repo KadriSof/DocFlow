@@ -13,9 +13,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class IngestionJobConfig {
 
     @Bean
-    public Job ingestionJob(JobRepository jobRepository, Step dummyStep) {
+    public Job ingestionJob(JobRepository jobRepository, Step dummyStep, Step ocrStep) {
         return new JobBuilder("ingestionJob", jobRepository)
                 .start(dummyStep)
+                .next(ocrStep)
                 .build();
     }
 
