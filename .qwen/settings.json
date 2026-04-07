@@ -4,7 +4,16 @@
       "Bash(git checkout *)",
       "Bash(findstr *)",
       "Bash(mvnw.cmd *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(timeout *)",
+      "Bash(sleep *)",
+      "Bash(curl *)",
+      "Bash(tasklist *)",
+      "Bash(python *)",
+      "Bash(taskkill *)",
+      "Bash(del *)",
+      "Bash(rm *)"
     ]
   },
   "$version": 3

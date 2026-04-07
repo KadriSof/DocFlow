@@ -7,6 +7,8 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -20,12 +22,15 @@ public class OcrStepConfig {
     public Step ocrStep(JobRepository jobRepository,
                         PlatformTransactionManager transactionManager,
                         OcrService ocrService,
-                        OcrProperties ocrProperties) {
+                        OcrProperties ocrProperties,
+                        ItemReader<OcrRequest> ocrItemReader,
+                        ItemWriter<OcrResult> ocrItemWriter) {
+
         return new StepBuilder("ocrStep", jobRepository)
                 .<OcrRequest, OcrResult>chunk(ocrProperties.getChunkSize(), transactionManager)
-                .reader(ocrItemReader())
+                .reader(ocrItemReader)
                 .processor(ocrItemProcessor(ocrService, ocrProperties))
-                .writer(ocrItemWriter())
+                .writer(ocrItemWriter)
                 .faultTolerant()
                 .skipLimit(ocrProperties.getSkipLimit())
                 .skip(IOException.class)
@@ -36,8 +41,13 @@ public class OcrStepConfig {
     }
 
     @Bean
-    public OcrItemReader ocrItemReader() {
+    public OcrItemReader defaultOcrItemReader() {
         return new OcrItemReader();
+    }
+
+    @Bean
+    public OcrItemWriter defaultOcrItemWriter() {
+        return new OcrItemWriter();
     }
 
     private ItemProcessor<OcrRequest, OcrResult> ocrItemProcessor(OcrService ocrService,
@@ -47,10 +57,5 @@ public class OcrStepConfig {
             OcrRequest normalizedRequest = new OcrRequest(request.image(), request.pageNumber(), language);
             return ocrService.performOcr(normalizedRequest);
         };
-    }
-
-    @Bean
-    public OcrItemWriter ocrItemWriter() {
-        return new OcrItemWriter();
     }
 }

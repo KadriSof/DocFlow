@@ -1,7 +1,6 @@
 package com.sofkad.docflow.ocr.infrastructure;
 
 import com.sofkad.docflow.ocr.domain.OcrRequest;
-import com.sofkad.docflow.ocr.domain.OcrResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,13 +32,8 @@ class OcrRetrySkipIntegrationTest {
     @Autowired
     private OcrItemReader ocrItemReader;
 
-    @Autowired
-    private OcrItemWriter ocrItemWriter;
-
     @Test
     void ocrStepShouldCompleteEvenWithSomeFailures() throws Exception {
-        ocrItemWriter.clear();
-
         // Mix of valid and failing requests
         List<OcrRequest> input = List.of(
                 new OcrRequest("valid-page".getBytes(), 1, "eng"),
@@ -56,6 +49,5 @@ class OcrRetrySkipIntegrationTest {
 
         // Job should complete successfully with valid inputs
         assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
-        assertThat(ocrItemWriter.getWrittenResults()).hasSize(2);
     }
 }

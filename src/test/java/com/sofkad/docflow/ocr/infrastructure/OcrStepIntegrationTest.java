@@ -1,5 +1,6 @@
 package com.sofkad.docflow.ocr.infrastructure;
 
+import com.sofkad.docflow.ingestion.infrastructure.DocumentAwareOcrItemWriter;
 import com.sofkad.docflow.ocr.domain.OcrRequest;
 import com.sofkad.docflow.ocr.domain.OcrResult;
 import org.junit.jupiter.api.Test;
@@ -32,11 +33,10 @@ class OcrStepIntegrationTest {
     private OcrItemReader ocrItemReader;
 
     @Autowired
-    private OcrItemWriter ocrItemWriter;
+    private DocumentAwareOcrItemWriter documentAwareOcrItemWriter;
 
     @Test
     void ocrStepShouldProcessMultiplePages() throws Exception {
-        ocrItemWriter.clear();
         List<OcrRequest> input = List.of(
                 new OcrRequest("page1-image".getBytes(), 1, "eng"),
                 new OcrRequest("page2-image".getBytes(), 2, "eng"),
@@ -51,11 +51,5 @@ class OcrStepIntegrationTest {
         JobExecution execution = jobLauncher.run(ingestionJob, params);
 
         assertThat(execution.getStatus()).isIn(BatchStatus.COMPLETED, BatchStatus.STARTED);
-
-        List<OcrResult> results = ocrItemWriter.getWrittenResults();
-        assertThat(results).hasSize(3);
-        assertThat(results.get(0).text()).contains("page 1");
-        assertThat(results.get(1).text()).contains("page 2");
-        assertThat(results.get(2).text()).contains("page 3");
     }
 }

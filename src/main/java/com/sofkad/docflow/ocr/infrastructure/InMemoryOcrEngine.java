@@ -3,10 +3,8 @@ package com.sofkad.docflow.ocr.infrastructure;
 import com.sofkad.docflow.ocr.domain.OcrEngine;
 import com.sofkad.docflow.ocr.domain.OcrRequest;
 import com.sofkad.docflow.ocr.domain.OcrResult;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-@Primary
 @Component
 public class InMemoryOcrEngine implements OcrEngine {
 

@@ -8,6 +8,7 @@ import net.sourceforge.tess4j.TesseractException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.awt.image.BufferedImage;
@@ -21,6 +22,7 @@ import java.io.IOException;
  * Tests for this class should be tagged @Tag("native") and excluded from CI by default.
  */
 @Component
+@Primary
 @Conditional(TesseractAvailabilityCondition.class)
 public class TesseractOcrEngine implements OcrEngine {
 

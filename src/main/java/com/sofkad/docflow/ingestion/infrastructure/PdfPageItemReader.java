@@ -1,4 +1,4 @@
-package com.sofkad.docflow.ocr.infrastructure;
+package com.sofkad.docflow.ingestion.infrastructure;
 
 import com.sofkad.docflow.ocr.domain.OcrRequest;
 import org.apache.pdfbox.Loader;

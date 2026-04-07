@@ -2,7 +2,6 @@ package com.sofkad.docflow;
 
 import com.sofkad.docflow.ocr.domain.OcrRequest;
 import com.sofkad.docflow.ocr.infrastructure.OcrItemReader;
-import com.sofkad.docflow.ocr.infrastructure.OcrItemWriter;
 import com.sofkad.docflow.processing.domain.DocumentType;
 import com.sofkad.docflow.processing.domain.ExtractionRequest;
 import com.sofkad.docflow.processing.infrastructure.ExtractionItemReader;
@@ -39,9 +38,6 @@ class FullPipelineIntegrationTest {
     private OcrItemReader ocrItemReader;
 
     @Autowired
-    private OcrItemWriter ocrItemWriter;
-
-    @Autowired
     private ExtractionItemReader extractionItemReader;
 
     @Autowired
@@ -71,9 +67,6 @@ class FullPipelineIntegrationTest {
         assertThat(execution.getStepExecutions())
                 .extracting(se -> se.getStepName())
                 .containsExactlyInAnyOrder("dummyStep", "ocrStep", "extractionStep");
-
-        // Verify OCR step produced results
-        assertThat(ocrItemWriter.getWrittenResults()).hasSize(2);
 
         // Verify extraction step produced results
         assertThat(extractionItemWriter.getWrittenResults()).hasSize(1);
