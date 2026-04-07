@@ -1,6 +1,5 @@
 package com.sofkad.docflow.ingestion.api;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentUploadController {
 
-    private final Set<String> knownDocuments = new HashSet<>();
+    private final Set<String> knownDocuments = ConcurrentHashMap.newKeySet();
 
     @PostMapping
     public ResponseEntity<UploadResponse> upload(@RequestParam("file") MultipartFile file) {
@@ -37,7 +36,17 @@ public class DocumentUploadController {
 
     private boolean isPdf(MultipartFile file) {
         String contentType = file.getContentType();
-        return contentType != null && contentType.equals("application/pdf");
+        if (contentType == null || !contentType.equals("application/pdf")) {
+            return false;
+        }
+
+        try {
+            byte[] header = file.getBytes();
+            return header.length >= 4 &&
+                    new String(header, 0, 4, java.nio.charset.StandardCharsets.US_ASCII).startsWith("%PDF");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @GetMapping("/{documentId}/status")
