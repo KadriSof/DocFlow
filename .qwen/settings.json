@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout *)",
+      "Bash(findstr *)",
+      "Bash(mvnw.cmd *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(timeout *)",
+      "Bash(sleep *)",
+      "Bash(curl *)",
+      "Bash(tasklist *)",
+      "Bash(python *)",
+      "Bash(taskkill *)",
+      "Bash(del *)",
+      "Bash(rm *)",
+      "Bash(git reset *)",
+      "Bash(echo *)",
+      "Bash(where *)",
+      "Bash(tesseract *)",
+      "Bash(dir *)"
+    ]
+  },
+  "$version": 3
+}

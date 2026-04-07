@@ -34,5 +34,14 @@ build/
 
 
 ## Excluded Project files
-docs/tdd-log.md
+docs/dev_log.md
 qwen-modus-operandi.md
+# H2 Database
+data/*.mv.db
+data/*.trace.db
+
+# Uploaded files (pending)
+data/pending/
+
+# Test PDFs (user data)
+data/*.pdf
